@@ -1,0 +1,115 @@
+---
+title: "Practice Maps"
+author: "Wilber Gutiérrez Taboada"
+date: '2022-04-04'
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: "united"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# 1. __Contexto de la Mapa__
+
+Esta vez, voy a hacer una figura de mapa de casos de muerte total por millon en el mundo.
+
+```{r packages, include=FALSE}
+library(tidyverse)
+library(readxl)
+
+
+```
+
+## 1.1. __Cargamos la data__
+
+cargamos los datos y juntamos con los datos con map_data de R.
+```{r Data,}
+mapa_data <- map_data('world')
+
+data1 <- read_excel("deaths_world.xlsx")
+
+data <- data1 %>% 
+  rename(region= location) %>% 
+  filter(date == '2022-04-02')
+
+mapdata <- left_join(mapa_data, data, by= 'region')
+
+```
+
+### 1.1.1. Filtramos los datos para mapear
+
+```{r filtro del data}
+mapadt <- mapdata %>% 
+  filter(!is.na(mapdata$total_deaths_per_million))
+```
+
+## 1.2. __Ploteamos__
+
+```{r}
+plt <- ggplot(mapadt, aes(x= long , y= lat, group= group)) +
+  geom_polygon(aes(fill= total_deaths_per_million),
+               color= 'black') +
+  scale_fill_gradient(name= 'Total muertos por millón',
+                      low= 'blue', high = 'red', na.value = 'grey50') +
+  labs(title="Fallecidos por COVID-19 en el Mundo",
+       subtitle = "Totales muertos por millón al 03 de abril de 2022",
+       caption= 'Source: Our World in Data | Wilber Gutiérrez') +
+  theme(
+    axis.title = element_blank(),
+    axis.line = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text = element_blank(),
+    rect = element_blank(),
+    
+    plot.title=element_text(family="", 
+                                size=14, 
+                                hjust=0.5, 
+                                margin=margin(b=5)),
+    plot.subtitle=element_text(hjust=0.5, 
+                                size=11),
+    plot.caption=element_text(size=8, 
+                               margin=margin(t=5),
+                               hjust= 0.9),
+    
+    text= element_text(family="Gill Sans", 
+                       color = '#001D3D'),
+        plot.margin = margin(t=15, r=15, l=15, b=15) )
+
+```
+
+### 1.2.1. Usamos Cowplot
+
+con este paquete agregamos el icono a la grafica
+
+```{r, message=FALSE, warning=FALSE}
+# install.packages('magick')
+library(magick)
+library(cowplot)
+fig <- ggdraw() +
+  draw_image('D:/WORKrstudio/git/R_Rmd_Practice/death.png', x= .3, y= .3, scale = .2) +
+  draw_plot(plt)
+
+fig
+
+```
+
+### 1.2.2. Exportamos el Imagen
+
+```{r}
+ggsave(fig, file="Covid-19_fallecidos.png",  height = 5, width = 7, 
+         dpi = 320,  
+         type = "cairo")
+
+```
+
+
+
+
+
+
+
+
+
