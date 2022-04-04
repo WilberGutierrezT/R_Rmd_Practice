@@ -80,6 +80,10 @@ plt <- ggplot(mapadt, aes(x= long , y= lat, group= group)) +
     
     text= element_text(family="Gill Sans", 
                        color = '#001D3D'),
+    plot.background = element_rect(fill= 'white',
+                                   color = '#F6C564'),
+    panel.background = element_rect(fill= 'white',
+                                    color = "#F7CE7D"),
         plot.margin = margin(t=15, r=15, l=15, b=15) )
 
 ```
