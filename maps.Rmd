@@ -64,6 +64,8 @@ plt <- ggplot(mapadt, aes(x= long , y= lat, group= group)) +
     axis.text = element_blank(),
     rect = element_blank(),
     
+    panel.grid = element_blank(),
+    
     plot.title=element_text(family="", 
                                 size=14, 
                                 hjust=0.5, 
